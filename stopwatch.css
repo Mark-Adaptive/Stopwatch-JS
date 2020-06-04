@@ -1,0 +1,12 @@
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center the page horizontally */
+    align-items: center; /* Center the page vertically */
+    font-family: 'Lato';
+}
+
+#timer {
+    font-size: 60px;
+}
