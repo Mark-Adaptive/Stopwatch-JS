@@ -2,7 +2,7 @@ function Stopwatch(timer) {
     let time = 0;
     let prev_time;
     let interval;
-    let prev_lap_time;
+    let prev_lap_time = Date.now();
     this.On = false;
 
     function update() {
@@ -54,8 +54,8 @@ function Stopwatch(timer) {
         let new_time = Date.now();
         let lap_time = new_time - prev_lap_time;
         prev_lap_time = new_time
-        prev_lap_time = formatTime(lap_time);
-        return prev_lap_time;
+        lap_time = formatTime(lap_time);
+        return lap_time;
     };
   }
 
@@ -81,9 +81,10 @@ toggleBtn.addEventListener('click', function() {
 });
 
 lapBtn.addEventListener('click', function() {
+  if (stopwatch.On) {
     let lap_time = stopwatch.getLapTime();
     let list_item = document.createElement("li");
     list_item.appendChild(document.createTextNode(lap_time));
     lapsList.appendChild(list_item);
-    console.log("added");
+  }
 });
