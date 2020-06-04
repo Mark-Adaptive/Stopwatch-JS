@@ -15,27 +15,14 @@ function Stopwatch(timer) {
       timer.textContent = formatTime(time);
     }
   
-    function formatTime(time) {
-      time = new Date(time);
+    function formatTime(inputTime) {
+      const time = new Date(inputTime);
   
-      let minutes = time.getMinutes().toString();
-      let seconds = time.getSeconds().toString();
-      let milliseconds = time.getMilliseconds().toString();
-  
-      if (minutes.length < 2) {
-        minutes = "0" + minutes;
-      }
-      if (seconds.length < 2) {
-        seconds = "0" + seconds;
-      }
-      if (milliseconds.length < 2) {
-        milliseconds = "0" + milliseconds;
-      }
-      else if (milliseconds.length > 2) {
-        milliseconds = milliseconds.slice(0,2);
-      }
-      let formattedTime = `${minutes} : ${seconds} . ${milliseconds}`;
-      return formattedTime;
+      const minutes = time.getMinutes().toString().padStart(2, '0');
+      const seconds = time.getSeconds().toString().padStart(2, '0');
+      const centis = Math.round(time.getMilliseconds() /10).toString().padStart(2, '0');
+
+      return `${minutes} : ${seconds} . ${centis}`;
     }
   
     this.start = function() {
@@ -45,12 +32,15 @@ function Stopwatch(timer) {
     };
   
     this.stop = function() {
+      this.On = false;
       clearInterval(interval);
       interval = null;
-      this.On = false;
     };
   
     this.getLapTime = function() {
+      if (prev_lap_time === null){
+        prev_lap_time = time;
+      }
         let new_time = Date.now();
         let lap_time = new_time - prev_lap_time;
         prev_lap_time = new_time

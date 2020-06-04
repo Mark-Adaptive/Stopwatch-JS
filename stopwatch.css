@@ -2,11 +2,11 @@
 body {
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Center the page horizontally */
-    align-items: center; /* Center the page vertically */
-    font-family: 'Lato';
+    justify-content: center; 
+    align-items: center;
+    font-family: 'Helvetica';
 }
 
 #timer {
-    font-size: 60px;
+    font-size: 80px;
 }
