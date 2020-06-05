@@ -6,16 +6,6 @@ function Stopwatch(timer) {
     this.longest_lap = null;
     this.shortest_lap = null;
     this.On = false;
-
-    function update() {
-        let new_time = Date.now();
-        let timePassed = new_time - prev_time;
-        prev_time = new_time;
-        if (this.On) {
-            time += timePassed;
-        }
-      timer.textContent = formatTime(time);
-    }
   
     this.formatTime = function(inputTime) {
       const time = new Date(inputTime);
@@ -26,6 +16,26 @@ function Stopwatch(timer) {
 
       return `${minutes} : ${seconds} . ${centis}`;
     }
+
+    function formatTime(inputTime){
+      const time = new Date(inputTime);
+  
+      const minutes = time.getMinutes().toString().padStart(2, '0');
+      const seconds = time.getSeconds().toString().padStart(2, '0');
+      const centis = Math.round(time.getMilliseconds() /10).toString().padStart(2, '0');
+
+      return `${minutes} : ${seconds} . ${centis}`;
+    }
+
+    function update() {
+      let new_time = Date.now();
+      let timePassed = new_time - prev_time;
+      prev_time = new_time;
+      if (this.On) {
+          time += timePassed;
+      }
+    timer.textContent = formatTime(time);
+  }
   
     this.start = function() {
       interval = setInterval(update.bind(this), 10);
@@ -81,26 +91,40 @@ toggleBtn.addEventListener('click', function() {
 lapBtn.addEventListener('click', function() {
   if (stopwatch.On) {
     let lap_time = stopwatch.getLapTime();
-    let list_item = document.createElement("li");
+    let list_item = document.createElement('li');
     let formatted_lap_time = stopwatch.formatTime(lap_time);
-    list_item.appendChild(document.createTextNode(formated_lap_time));
+    list_item.appendChild(document.createTextNode(formatted_lap_time));
+    let items = lapsList.getElementsByTagName('li');
     if (stopwatch.shortest_lap !== null) {
-      if (lap_time <= shortest_lap) {
+      if (lap_time <= stopwatch.shortest_lap) {
         stopwatch.shortest_lap = lap_time;
-        list_item.textContent.fontcolor = 'red';
+      }
+      else if (lap_time >= stopwatch.longest_lap) {
+        stopwatch.longest_lap = lap_time;
+    }
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].textContent == stopwatch.longest_lap) {
+        items[i].style.color = 'red';
+      }
+      else if (items[i].textContent == stopwatch.shortest_lap) {
+        items[i].style.color = 'green';
+      }
+      else {
+        items[i].style.color = 'black';
+        }
       }
     }
     else {
       stopwatch.shortest_lap = lap_time;
-      stopwath.longest_lap = lap_time;
-    }
-    if (lap_time >= longest_lap) {
       stopwatch.longest_lap = lap_time;
-      list_item.textContent.fontcolor = 'green';
+      }
+      lapsList.appendChild(list_item);
     }
-    lapsList.appendChild(list_item);
-  }
   else {
+    let items = lapsList.getElementsByTagName('li');
+    while(items.length > 0) {
+      lapsList.removeChild(items[0]);
+    }
     stopwatch.reset();
   }
 });
