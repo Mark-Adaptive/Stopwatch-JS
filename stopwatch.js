@@ -3,6 +3,8 @@ function Stopwatch(timer) {
     let prev_time;
     let interval;
     let prev_lap_time = Date.now();
+    this.longest_lap = null;
+    this.shortest_lap = null;
     this.On = false;
 
     function update() {
@@ -15,7 +17,7 @@ function Stopwatch(timer) {
       timer.textContent = formatTime(time);
     }
   
-    function formatTime(inputTime) {
+    this.formatTime = function(inputTime) {
       const time = new Date(inputTime);
   
       const minutes = time.getMinutes().toString().padStart(2, '0');
@@ -44,9 +46,13 @@ function Stopwatch(timer) {
         let new_time = Date.now();
         let lap_time = new_time - prev_lap_time;
         prev_lap_time = new_time
-        lap_time = formatTime(lap_time);
         return lap_time;
     };
+
+    this.reset = function() {
+      time = 0;
+      update();
+    }
   }
 
 let timer = document.getElementById('timer');
@@ -58,11 +64,13 @@ let stopwatch = new Stopwatch(timer);
 
 function start() {
   toggleBtn.textContent = 'Stop';
+  lapBtn.textContent = 'Lap';
   stopwatch.start();
 }
 
 function stop() {
   toggleBtn.textContent = 'Start';
+  lapBtn.textContent = 'Reset';
   stopwatch.stop();
 }
 
@@ -74,7 +82,25 @@ lapBtn.addEventListener('click', function() {
   if (stopwatch.On) {
     let lap_time = stopwatch.getLapTime();
     let list_item = document.createElement("li");
-    list_item.appendChild(document.createTextNode(lap_time));
+    let formatted_lap_time = stopwatch.formatTime(lap_time);
+    list_item.appendChild(document.createTextNode(formated_lap_time));
+    if (stopwatch.shortest_lap !== null) {
+      if (lap_time <= shortest_lap) {
+        stopwatch.shortest_lap = lap_time;
+        list_item.textContent.fontcolor = 'red';
+      }
+    }
+    else {
+      stopwatch.shortest_lap = lap_time;
+      stopwath.longest_lap = lap_time;
+    }
+    if (lap_time >= longest_lap) {
+      stopwatch.longest_lap = lap_time;
+      list_item.textContent.fontcolor = 'green';
+    }
     lapsList.appendChild(list_item);
+  }
+  else {
+    stopwatch.reset();
   }
 });
