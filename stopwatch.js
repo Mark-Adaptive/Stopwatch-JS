@@ -1,36 +1,16 @@
 function Stopwatch(timer) {
     let time = 0;
-    let prev_time;
+    let prevTime;
     let interval;
-    let prev_lap_time = Date.now();
-    this.longest_lap = null;
-    this.shortest_lap = null;
+    let prevLapTime = null;
+    this.longestLap = null;
+    this.shortestLap = null;
     this.On = false;
   
-    this.formatTime = function(inputTime) {
-      const time = new Date(inputTime);
-  
-      const minutes = time.getMinutes().toString().padStart(2, '0');
-      const seconds = time.getSeconds().toString().padStart(2, '0');
-      const centis = Math.round(time.getMilliseconds() /10).toString().padStart(2, '0');
-
-      return `${minutes} : ${seconds} . ${centis}`;
-    }
-
-    function formatTime(inputTime){
-      const time = new Date(inputTime);
-  
-      const minutes = time.getMinutes().toString().padStart(2, '0');
-      const seconds = time.getSeconds().toString().padStart(2, '0');
-      const centis = Math.round(time.getMilliseconds() /10).toString().padStart(2, '0');
-
-      return `${minutes} : ${seconds} . ${centis}`;
-    }
-
     function update() {
       let new_time = Date.now();
-      let timePassed = new_time - prev_time;
-      prev_time = new_time;
+      let timePassed = new_time - prevTime;
+      prevTime = new_time;
       if (this.On) {
           time += timePassed;
       }
@@ -39,7 +19,8 @@ function Stopwatch(timer) {
   
     this.start = function() {
       interval = setInterval(update.bind(this), 10);
-      prev_time = Date.now();
+      prevTime = Date.now();
+      prevLapTime = Date.now();
       this.On = true;
     };
   
@@ -50,78 +31,98 @@ function Stopwatch(timer) {
     };
   
     this.getLapTime = function() {
-      if (prev_lap_time === null){
-        prev_lap_time = time;
+      if (prevLapTime === null){
+        prevLapTime = time;
       }
         let new_time = Date.now();
-        let lap_time = new_time - prev_lap_time;
-        prev_lap_time = new_time
-        return lap_time;
+        let lapTime = new_time - prevLapTime;
+        prevLapTime = new_time
+        return lapTime;
     };
 
     this.reset = function() {
       time = 0;
+      this.longestLap = null;
+      this.shortestLap = null;
+
       update();
     }
-  }
+  };
 
 let timer = document.getElementById('timer');
 let toggleBtn = document.getElementById('toggle');
 let lapBtn = document.getElementById('lap');
-let lapsList = document.getElementById('lap_times');
+let lapsList = document.getElementById('lapTimes');
 
 let stopwatch = new Stopwatch(timer);
 
 function start() {
   toggleBtn.textContent = 'Stop';
   lapBtn.textContent = 'Lap';
+  toggleBtn.className = 'btn btn-danger';
+  lapBtn.className = 'btn btn-primary';
   stopwatch.start();
 }
 
 function stop() {
   toggleBtn.textContent = 'Start';
   lapBtn.textContent = 'Reset';
+  toggleBtn.className = 'btn btn-success';
+  lapBtn.className = 'btn btn-warning';
   stopwatch.stop();
 }
 
+function setLaps(lapTime) {
+  if (stopwatch.shortestLap !== null) {
+    if (lapTime <= stopwatch.shortestLap) {
+            stopwatch.shortestLap = lapTime;
+    }
+    else if (lapTime >= stopwatch.longestLap) {
+      stopwatch.longestLap = lapTime;
+    }
+  }
+  else {
+    stopwatch.shortestLap = lapTime;
+    stopwatch.longestLap = lapTime;
+    }
+}
+
+function formatTime(inputTime){
+  const time = new Date(inputTime);
+  const minutes = time.getMinutes().toString().padStart(2, '0');
+  const seconds = time.getSeconds().toString().padStart(2, '0');
+  const centis = Math.round(time.getMilliseconds() /10).toString().padStart(2, '0');
+
+  return `${minutes} : ${seconds} . ${centis}`;
+}
 toggleBtn.addEventListener('click', function() {
   stopwatch.On ? stop() : start();
 });
 
 lapBtn.addEventListener('click', function() {
+  
   if (stopwatch.On) {
-    let lap_time = stopwatch.getLapTime();
+    let lapTime = stopwatch.getLapTime();
     let list_item = document.createElement('li');
-    let formatted_lap_time = stopwatch.formatTime(lap_time);
-    list_item.appendChild(document.createTextNode(formatted_lap_time));
-    let items = lapsList.getElementsByTagName('li');
-    if (stopwatch.shortest_lap !== null) {
-      if (lap_time <= stopwatch.shortest_lap) {
-        stopwatch.shortest_lap = lap_time;
-      }
-      else if (lap_time >= stopwatch.longest_lap) {
-        stopwatch.longest_lap = lap_time;
-    }
-    for (let i = 0; i < items.length; i++) {
-      if (items[i].textContent == stopwatch.longest_lap) {
-        items[i].style.color = 'red';
-      }
-      else if (items[i].textContent == stopwatch.shortest_lap) {
-        items[i].style.color = 'green';
-      }
-      else {
-        items[i].style.color = 'black';
+    list_item.appendChild(document.createTextNode(formatTime(lapTime)));
+    lapsList.appendChild(list_item);
+    const items = lapsList.getElementsByTagName('li');
+    setLaps(lapTime);
+    if (items.length > 1) {
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].textContent == formatTime(stopwatch.longestLap)) {
+          items[i].style.color = 'red';
         }
+        else if (items[i].textContent == formatTime(stopwatch.shortestLap)) {
+          items[i].style.color = 'green';
+        }
+        else {
+          items[i].style.color = 'white';
+          }
       }
     }
-    else {
-      stopwatch.shortest_lap = lap_time;
-      stopwatch.longest_lap = lap_time;
-      }
-      lapsList.appendChild(list_item);
-    }
-  else {
-    let items = lapsList.getElementsByTagName('li');
+  } else {
+    const items = lapsList.getElementsByTagName('li');
     while(items.length > 0) {
       lapsList.removeChild(items[0]);
     }

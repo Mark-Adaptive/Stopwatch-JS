@@ -5,8 +5,29 @@ body {
     justify-content: center; 
     align-items: center;
     font-family: 'Helvetica';
+    color: white;
+    background-color: black;
 }
 
+.btn {
+    margin-left: 40px;
+    margin-right: 40px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
 #timer {
-    font-size: 80px;
+    margin-top: 200px;
+    font-size: 100px;
+}
+
+ul {
+    list-style-type: none;
+}
+li {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.lapTimesLabel {
+    font-weight: bolder;
 }
