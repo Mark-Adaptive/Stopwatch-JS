@@ -8,9 +8,9 @@ function Stopwatch(timer) {
     this.On = false;
   
     function update() {
-      let new_time = Date.now();
-      let timePassed = new_time - prevTime;
-      prevTime = new_time;
+      let newTime = Date.now();
+      let timePassed = newTime - prevTime;
+      prevTime = newTime;
       if (this.On) {
           time += timePassed;
       }
@@ -34,9 +34,9 @@ function Stopwatch(timer) {
       if (prevLapTime === null){
         prevLapTime = time;
       }
-        let new_time = Date.now();
-        let lapTime = new_time - prevLapTime;
-        prevLapTime = new_time
+        let newTime = Date.now();
+        let lapTime = newTime - prevLapTime;
+        prevLapTime = newTime
         return lapTime;
     };
 
@@ -56,6 +56,7 @@ let lapsList = document.getElementById('lapTimes');
 
 let stopwatch = new Stopwatch(timer);
 
+//Handle start logic
 function start() {
   toggleBtn.textContent = 'Stop';
   lapBtn.textContent = 'Lap';
@@ -64,6 +65,7 @@ function start() {
   stopwatch.start();
 }
 
+//Handle stop logic
 function stop() {
   toggleBtn.textContent = 'Start';
   lapBtn.textContent = 'Reset';
@@ -100,7 +102,7 @@ toggleBtn.addEventListener('click', function() {
 });
 
 lapBtn.addEventListener('click', function() {
-  
+  //Handle lapping logic
   if (stopwatch.On) {
     let lapTime = stopwatch.getLapTime();
     let list_item = document.createElement('li');
@@ -122,6 +124,7 @@ lapBtn.addEventListener('click', function() {
       }
     }
   } else {
+    //Handle reset logic
     const items = lapsList.getElementsByTagName('li');
     while(items.length > 0) {
       lapsList.removeChild(items[0]);
