@@ -100,22 +100,23 @@ function formatTime(inputTime){
 toggleBtn.addEventListener('click', function() {
   stopwatch.On ? stop() : start();
 });
-
+let lapCounter = 1;
 lapBtn.addEventListener('click', function() {
   //Handle lapping logic
   if (stopwatch.On) {
     let lapTime = stopwatch.getLapTime();
     let list_item = document.createElement('li');
-    list_item.appendChild(document.createTextNode(formatTime(lapTime)));
+    list_item.appendChild(document.createTextNode(`Lap ${lapCounter} - ${formatTime(lapTime)}`));
     lapsList.appendChild(list_item);
     const items = lapsList.getElementsByTagName('li');
     setLaps(lapTime);
     if (items.length > 1) {
       for (let i = 0; i < items.length; i++) {
-        if (items[i].textContent == formatTime(stopwatch.longestLap)) {
+        let item = items[i].textContent.toString();
+        if (item.split('- ')[1] == formatTime(stopwatch.longestLap)) {
           items[i].style.color = 'red';
         }
-        else if (items[i].textContent == formatTime(stopwatch.shortestLap)) {
+        else if (item.split('- ')[1] == formatTime(stopwatch.shortestLap)) {
           items[i].style.color = 'green';
         }
         else {
@@ -123,12 +124,14 @@ lapBtn.addEventListener('click', function() {
           }
       }
     }
+    lapCounter++;
   } else {
     //Handle reset logic
     const items = lapsList.getElementsByTagName('li');
     while(items.length > 0) {
       lapsList.removeChild(items[0]);
     }
+    lapCounter = 1;
     stopwatch.reset();
   }
 });
